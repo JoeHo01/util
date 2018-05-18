@@ -7,6 +7,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -20,12 +21,13 @@ import java.util.Map;
  *
  * Auth: Jo.Ho
  * Email: 827661159@qq.com
- * Date: 2018-4-20
+ * Date: 2018/4/20
  *
  * Send HTTP GET/POST/PUT/DELETE request.
  * Return the HttpResponse.
  *
  */
+@Component
 public class HttpService {
 
 	private static Logger LOG = LoggerFactory.getLogger(HttpService.class);
@@ -43,6 +45,19 @@ public class HttpService {
 	private final String AUTHORIZATION = "Authorization";
 
 	/**
+	 * Http GET Request
+	 *
+	 * @param headers       headers
+	 * @param url           url
+	 * @param params        params
+	 * @param authorization authorization
+	 * @return HttpResponse
+	 */
+	public HttpResponse get(Map<String, String> headers, String url, Map<String, Object> params, String authorization) {
+		return sendRequest(RequestBuilder.get(), headers, url, params, null, authorization);
+	}
+
+	/**
 	 * Http POST Request
 	 *
 	 * @param headers       headers
@@ -57,16 +72,31 @@ public class HttpService {
 	}
 
 	/**
-	 * Http GET Request
+	 * Http PUT Request
 	 *
 	 * @param headers       headers
 	 * @param url           url
-	 * @param params        params
+	 * @param requestBody   requestBody
 	 * @param authorization authorization
 	 * @return HttpResponse
 	 */
-	public HttpResponse get(Map<String, String> headers, String url, Map<String, Object> params, String authorization) {
-		return sendRequest(RequestBuilder.get(), headers, url, params, null, authorization);
+	public HttpResponse put(Map<String, String> headers, String url, Map<String, Object> params, HttpEntity requestBody, String authorization) {
+		if (CollectionUtils.isEmpty(headers)) headers.put(CONTENT_TYPE, DEFAULT_RESPONSE_TYPE);
+		return sendRequest(RequestBuilder.put(), headers, url, params, requestBody, authorization);
+	}
+
+	/**
+	 * Http DELETE Request
+	 *
+	 * @param headers       headers
+	 * @param url           url
+	 * @param requestBody   requestBody
+	 * @param authorization authorization
+	 * @return HttpResponse
+	 */
+	public HttpResponse delete(Map<String, String> headers, String url, Map<String, Object> params, HttpEntity requestBody, String authorization) {
+		if (CollectionUtils.isEmpty(headers)) headers.put(CONTENT_TYPE, DEFAULT_RESPONSE_TYPE);
+		return sendRequest(RequestBuilder.delete(), headers, url, params, requestBody, authorization);
 	}
 
 	/**
@@ -125,8 +155,6 @@ public class HttpService {
 	}
 
 	/**
-	 * Builds the full url.
-	 *
 	 * @param url    input URL to be completed
 	 * @param params request parameters to send to the remote service
 	 * @return full URL with params

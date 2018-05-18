@@ -25,6 +25,8 @@ import java.util.Map;
 public class HttpResponse {
 	Logger logger = LoggerFactory.getLogger(HttpResponse.class);
 
+	private final String CHARSET = "ISO-8859-1";
+
 	private Map<String, String> headers;
 
 	private String responseBody;
@@ -59,7 +61,7 @@ public class HttpResponse {
 
 	public String getResponseBody(String charset) {
 		try {
-			return new String(this.responseBody.getBytes("ISO-8859-1"), charset);
+			return new String(this.responseBody.getBytes(CHARSET), charset);
 		} catch (UnsupportedEncodingException e) {
 			logger.error(e.getMessage(), e);
 			return responseBody;
@@ -68,7 +70,7 @@ public class HttpResponse {
 
 	public void setResponseBody(HttpEntity httpEntity) {
 		try {
-			this.responseBody = EntityUtils.toString(httpEntity, "ISO-8859-1");
+			this.responseBody = EntityUtils.toString(httpEntity, CHARSET);
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 		}
